@@ -114,5 +114,52 @@ SC: o(n)
 ===============================================TUF-1 end-------------------------------------------------------------------------
     
     
+! The "Count ways to reach Nth stair" problem is a classic dynamic programming problem. The idea is:
 
-    
+You can move either 1 step or 2 steps at a time.
+
+Find how many distinct ways to reach the Nth stair.
+
+
+public class StaircaseWays {
+
+    public static int countWays(int n) {
+        // dp[i] = number of ways to reach the ith stair
+
+        int[] dp = new int[n + 1];
+
+        // Base cases
+        dp[0] = 1;  // 1 way to stand at the ground (step 0)
+        if (n >= 1) dp[1] = 1;  // 1 way to reach step 1 (single step)
+
+        // Fill the dp array for stairs 2 to n
+        for (int i = 2; i <= n; i++) {
+            dp[i] = dp[i - 1] + dp[i - 2];  // sum of ways to previous two steps
+        }
+
+        return dp[n];
+    }
+
+    public static void main(String[] args) {
+        int n = 5; // example input
+        System.out.println("Number of ways to reach stair " + n + ": " + countWays(n));
+    }
+}
+
+
+===========================================
+    public static int countWaysOptimized(int n) {
+    if (n == 0 || n == 1) return 1;
+
+    int prev1 = 1; // dp[i - 1]
+    int prev2 = 1; // dp[i - 2]
+
+    for (int i = 2; i <= n; i++) {
+        int current = prev1 + prev2;
+        prev2 = prev1;
+        prev1 = current;
+    }
+
+    return prev1;
+}
+
