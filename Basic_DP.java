@@ -166,4 +166,27 @@ public class Staircase_Ways {
     minimum cost to reach the last stair.
 
 
-    
+    class Solution {
+
+    public int frogJump(int[] heights) {
+        int n = heights.length - 1;
+        return frogJump(n, heights);
+    }
+
+    public int frogJump(int n, int[] s) {
+        int left = 0;
+
+        if (n == 0) {
+            return 0;
+        }
+       
+        left = frogJump(n - 1, s) + Math.abs(s[n] - s[n - 1]);
+         int right = Integer.MAX_VALUE;
+        if (n > 1) {
+            right = frogJump(n - 2, s) + Math.abs(s[n] - s[n - 2]);
+        }
+        return Math.min(left, right);
+    }
+}
+
+--------------------------
