@@ -53,7 +53,7 @@ public class FibonacciMemoization {
 // Space Complexity	O(n)  [O(n) for recurstion+o(n) for array/map]
 ===========================  
 
-   //Tabulation
+   //Tabulation    =Buttom up approach
 
     public class FibonacciTabulation {
 
