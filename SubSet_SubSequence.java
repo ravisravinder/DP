@@ -159,8 +159,61 @@ public class IsSubsequence {
     }
 }
 
-  
 
+🔁 Approach: Backtracking (Swapping Technique)
+
+  What is a Permutation?
+A permutation is a re-arrangement of elements.
+If you have n unique elements, total permutations = n! (n factorial)
+
+So for [1, 2, 3] → 3! = 6 permutations.
+
+  
+import java.util.*;
+
+public class Permutations {
+
+    public static void main(String[] args) {
+        int[] nums = {1, 2, 3};
+        List<List<Integer>> result = new ArrayList<>();
+        permute(nums, 0, result);
+        System.out.println(result);
+    }
+
+    // Helper method
+    static void permute(int[] nums, int start, List<List<Integer>> result) {
+        if (start == nums.length) {
+            // Convert array to list and add to result
+            List<Integer> permutation = new ArrayList<>();
+            for (int num : nums) {
+                permutation.add(num);
+            }
+            result.add(permutation);
+            return;
+        }
+
+        for (int i = start; i < nums.length; i++) {
+            // Swap
+            swap(nums, start, i);
+            // Recurse
+            permute(nums, start + 1, result);
+            // Backtrack (undo the swap)
+            swap(nums, start, i);
+        }
+    }
+
+    // Swapping helper
+    static void swap(int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+}
+
+
+
+
+-------------------------
 Summary Table
 Level	         Problem	                                Concept
 Beginner	Generate all subsets	      Recursion + Backtracking
