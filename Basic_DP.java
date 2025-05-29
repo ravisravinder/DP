@@ -24,7 +24,7 @@
 import java.util.HashMap;
 import java.util.Map;
 
-public class FibonacciMemoization {
+2. public class FibonacciMemoizationMap {
 
     private static Map<Integer, Integer> memo = new HashMap<>();
 
@@ -55,7 +55,7 @@ public class FibonacciMemoization {
 
    //Tabulation    =Buttom up approach
 
-    public class FibonacciTabulation {
+ 3.   public class Fibonacci_Tabulation_Array {
 
     public static int fibonacci(int n) {
         if (n <= 1) return n;
@@ -85,7 +85,7 @@ SC: o(n)
 
     Optimized
 
-    public class FibonacciOptimized {
+  4.   public class Fibonacci_Optimized {
 
     public static int fibonacci(int n) {
         if (n <= 1) return n;
@@ -114,14 +114,11 @@ SC: o(n)
 ===============================================TUF-1 end-------------------------------------------------------------------------
     
     
-! The "Count ways to reach Nth stair" problem is a classic dynamic programming problem. The idea is:
-
-You can move either 1 step or 2 steps at a time.
-
-Find how many distinct ways to reach the Nth stair.
+5. "Count ways to reach Nth stair" problem is a classic dynamic programming problem. The idea is:
+        You can move either 1 step or 2 steps at a time.    Find how many distinct ways to reach the Nth stair.
 
 
-public class StaircaseWays {
+public class Staircase_Ways {
 
     public static int countWays(int n) {
         // dp[i] = number of ways to reach the ith stair
@@ -148,7 +145,7 @@ public class StaircaseWays {
 
 
 ===========================================
-    public static int countWaysOptimized(int n) {
+    public static int countWays_Optimized(int n) {
     if (n == 0 || n == 1) return 1;
 
     int prev1 = 1; // dp[i - 1]
@@ -163,3 +160,10 @@ public class StaircaseWays {
     return prev1;
 }
 
+---------------------------------------
+    6. A frog is on stair 0 and wants to reach stair n-1. It can jump to the next 1 or 2 stairs.
+    Each stair has a height, and the cost of a jump is the absolute height difference. Find the 
+    minimum cost to reach the last stair.
+
+
+    
