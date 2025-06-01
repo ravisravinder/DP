@@ -91,7 +91,52 @@ public int[][] merge(int[][] intervals) {
 
 ============================================
   
+ 4. Detect Cycle in LinkedList (Pattern: Floyd’s Cycle Detection)
 
+  public boolean hasCycle(ListNode head) {
+    ListNode slow = head, fast = head;
+    while (fast != null && fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow == fast) return true;
+    }
+    return false;
+}
+
+-----------------------------------------
+   5. Kth Largest Element in Array (Pattern: Heap / QuickSelect)
+
+  public int findKthLargest(int[] nums, int k) {
+    PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+    for (int num : nums) {
+        minHeap.offer(num);
+        if (minHeap.size() > k) {
+            minHeap.poll();
+        }
+    }
+    return minHeap.peek();
+
+  ------------------------------
+  find k th smallest 
+
+
+    public int findKthSmallest(int[] nums, int k) {
+    PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+    
+    for (int num : nums) {
+        maxHeap.offer(num);
+        if (maxHeap.size() > k) {
+            maxHeap.poll();  // Remove the largest element if size exceeds k
+        }
+    }
+    return maxHeap.peek();  // The root is the kth smallest element
+}
+
+  Operation	Time Complexity        	Space Complexity
+k-th Largest Heap	O(n log k)	           O(k)
+k-th Smallest Heap	O(n log k)          	O(k)
+
+    
   
 
 
