@@ -104,7 +104,7 @@ public int[][] merge(int[][] intervals) {
 }
 
 -----------------------------------------
-   5. Kth Largest Element in Array (Pattern: Heap / QuickSelect)
+5. Kth Largest Element in Array (Pattern: Heap / QuickSelect)
 
   public int findKthLargest(int[] nums, int k) {
     PriorityQueue<Integer> minHeap = new PriorityQueue<>();
@@ -136,6 +136,39 @@ public int[][] merge(int[][] intervals) {
 k-th Largest Heap	O(n log k)	           O(k)
 k-th Smallest Heap	O(n log k)          	O(k)
 
+  -----------------------------------------------------
+  6. LRU Cache (Pattern: LinkedHashMap / Custom Doubly Linked List)
+
+  class LRUCache extends LinkedHashMap<Integer, Integer> {
+    private int capacity;
+
+    public LRUCache(int capacity) {
+        super(capacity, 0.75f, true); // accessOrder = true
+        this.capacity = capacity;
+    }
+
+    public int get(int key) {
+        return super.getOrDefault(key, -1);
+    }
+
+    public void put(int key, int value) {
+        super.put(key, value);
+    }
+
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<Integer, Integer> eldest) {
+        return size() > capacity;
+    }
+}
+
+
+
+
+----------------------------
+  Top K Frequent Elements (Pattern: HashMap + Heap)
+
+  
+  
     
   
 
