@@ -432,7 +432,256 @@ Trie-based Word Dictionary
   
   
     
-  
+  16. Word Ladder (Pattern: BFS + HashSet)
+🧠 Problem:
+Given two words (beginWord and endWord), and a dictionary, return the length of the shortest transformation sequence where:
+
+Only one letter can be changed at a time.
+
+Each transformed word must exist in the word list.
+
+✅ Pattern: Breadth-First Search
+java
+Copy
+Edit
+public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+    Set<String> dict = new HashSet<>(wordList);
+    if (!dict.contains(endWord)) return 0;
+
+    Queue<String> queue = new LinkedList<>();
+    queue.offer(beginWord);
+    int level = 1;
+
+    while (!queue.isEmpty()) {
+        int size = queue.size();
+        while (size-- > 0) {
+            String word = queue.poll();
+            char[] chars = word.toCharArray();
+
+            for (int i = 0; i < chars.length; i++) {
+                char old = chars[i];
+                for (char c = 'a'; c <= 'z'; c++) {
+                    chars[i] = c;
+                    String next = new String(chars);
+                    if (next.equals(endWord)) return level + 1;
+                    if (dict.contains(next)) {
+                        queue.offer(next);
+                        dict.remove(next); // prevent cycles
+                    }
+                }
+                chars[i] = old;
+            }
+        }
+        level++;
+    }
+
+    return 0;
+}
+📘 Example:
+java
+Copy
+Edit
+Input: beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log","cog"]
+Output: 5 ("hit"→"hot"→"dot"→"dog"→"cog")
+⏱️ Complexity:
+Time: O(N * M^2) where N = words, M = length of each word
+
+Space: O(N)
+
+🔁 17. Sliding Window Maximum (Pattern: Deque)
+🧠 Problem:
+Given an array and a window size k, return the max in each window.
+
+✅ Pattern: Sliding Window + Monotonic Queue (Deque)
+java
+Copy
+Edit
+public int[] maxSlidingWindow(int[] nums, int k) {
+    if (nums == null || k <= 0) return new int[0];
+    int n = nums.length;
+    int[] result = new int[n - k + 1];
+    Deque<Integer> deque = new ArrayDeque<>();
+
+    for (int i = 0; i < n; i++) {
+        // Remove out of window
+        if (!deque.isEmpty() && deque.peek() < i - k + 1) deque.poll();
+
+        // Remove smaller values
+        while (!deque.isEmpty() && nums[deque.peekLast()] < nums[i]) {
+            deque.pollLast();
+        }
+
+        deque.offer(i);
+
+        if (i >= k - 1) {
+            result[i - k + 1] = nums[deque.peek()];
+        }
+    }
+    return result;
+}
+📘 Example:
+java
+Copy
+Edit
+Input: nums = [1,3,-1,-3,5,3,6,7], k = 3
+Output: [3,3,5,5,6,7]
+⏱️ Complexity:
+Time: O(n)
+
+Space: O(k)
+
+🔁 18. Median from Data Stream (Pattern: Two Heaps)
+🧠 Problem:
+Design a class that supports adding numbers and finding the median.
+
+✅ Pattern: Two Heaps (Max Heap + Min Heap)
+java
+Copy
+Edit
+class MedianFinder {
+    PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+    PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+
+    public void addNum(int num) {
+        maxHeap.offer(num);
+        minHeap.offer(maxHeap.poll());
+        if (maxHeap.size() < minHeap.size())
+            maxHeap.offer(minHeap.poll());
+    }
+
+    public double findMedian() {
+        if (maxHeap.size() == minHeap.size())
+            return (maxHeap.peek() + minHeap.peek()) / 2.0;
+        else
+            return maxHeap.peek();
+    }
+}
+📘 Example:
+java
+Copy
+Edit
+addNum(1), addNum(2), findMedian() → 1.5
+addNum(3), findMedian() → 2
+⏱️ Complexity:
+Time: O(log n)
+
+Space: O(n)
+
+🔁 19. Kth Smallest in BST (Pattern: Inorder Traversal)
+🧠 Problem:
+Find the Kth smallest element in a BST.
+
+✅ Java Solution (Inorder Traversal):
+java
+Copy
+Edit
+public int kthSmallest(TreeNode root, int k) {
+    Stack<TreeNode> stack = new Stack<>();
+
+    while (true) {
+        while (root != null) {
+            stack.push(root);
+            root = root.left;
+        }
+
+        root = stack.pop();
+        if (--k == 0) return root.val;
+        root = root.right;
+    }
+}
+📘 Example:
+java
+Copy
+Edit
+Tree:     3
+        /   \
+       1     4
+        \
+         2
+
+k = 1 → Output: 1
+⏱️ Complexity:
+Time: O(H + k)
+
+Space: O(H), H = tree height
+
+🔁 20. Implement Trie (Prefix Tree)
+🧠 Problem:
+Implement insert, search, and startsWith methods of a Trie.
+
+✅ Java Trie Implementation:
+java
+Copy
+Edit
+class TrieNode {
+    TrieNode[] children = new TrieNode[26];
+    boolean isEnd = false;
+}
+
+class Trie {
+    TrieNode root = new TrieNode();
+
+    public void insert(String word) {
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            if (node.children[c - 'a'] == null)
+                node.children[c - 'a'] = new TrieNode();
+            node = node.children[c - 'a'];
+        }
+        node.isEnd = true;
+    }
+
+    public boolean search(String word) {
+        TrieNode node = searchPrefix(word);
+        return node != null && node.isEnd;
+    }
+
+    public boolean startsWith(String prefix) {
+        return searchPrefix(prefix) != null;
+    }
+
+    private TrieNode searchPrefix(String word) {
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            if (node.children[c - 'a'] == null)
+                return null;
+            node = node.children[c - 'a'];
+        }
+        return node;
+    }
+}
+📘 Example:
+java
+Copy
+Edit
+trie.insert("apple");
+trie.search("apple");    // true
+trie.startsWith("app");  // true
+⏱️ Complexity:
+Insert/Search: O(m)
+
+Space: O(m * n), n = number of words, m = word length
+
+🔜 Next Set Preview (21–25):
+Would you like me to continue with:
+
+✅ Top K Frequent Elements (Heap/Map)
+
+✅ Merge K Sorted Lists (Heap)
+
+✅ LRU Cache (LinkedHashMap/Custom)
+
+✅ Detect Cycle in Graph (DFS)
+
+✅ Serialize and Deserialize Binary Tree (BFS/DFS)
+
+Let me know which direction you'd prefer:
+
+More Graph/Heap/Greedy/DP
+
+More System Design + DSA blend
+
+Export to PDF/Markdown
 
 
 
