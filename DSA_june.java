@@ -165,7 +165,269 @@ k-th Smallest Heap	O(n log k)          	O(k)
 
 
 ----------------------------
-  Top K Frequent Elements (Pattern: HashMap + Heap)
+ 7. Top K Frequent Elements (Pattern: HashMap + Heap)
+
+  public int[] topKFrequent(int[] nums, int k) {
+    Map<Integer, Integer> freq = new HashMap<>();
+    for (int num : nums) freq.put(num, freq.getOrDefault(num, 0) + 1);
+    
+    PriorityQueue<Map.Entry<Integer, Integer>> heap = 
+        new PriorityQueue<>((a, b) -> a.getValue() - b.getValue());
+    
+    for (Map.Entry<Integer, Integer> entry : freq.entrySet()) {
+        heap.offer(entry);
+        if (heap.size() > k) heap.poll();
+    }
+    
+    int[] res = new int[k];
+    for (int i = k - 1; i >= 0; i--) {
+        res[i] = heap.poll().getKey();
+    }
+    return res;
+}
+
+-------------------------------------------------
+
+  8. Word Break (Pattern: DP + Trie)
+
+  public boolean wordBreak(String s, List<String> wordDict) {
+    Set<String> wordSet = new HashSet<>(wordDict);
+    boolean[] dp = new boolean[s.length() + 1];
+    dp[0] = true;
+
+    for (int i = 1; i <= s.length(); i++) {
+        for (int j = 0; j < i; j++) {
+            if (dp[j] && wordSet.contains(s.substring(j, i))) {
+                dp[i] = true;
+                break;
+            }
+        }
+    }
+    return dp[s.length()];
+}
+
+
+--------------------------------------------------------
+  9. Lowest Common Ancestor in BST
+
+  public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+    if (p.val < root.val && q.val < root.val)
+        return lowestCommonAncestor(root.left, p, q);
+    else if (p.val > root.val && q.val > root.val)
+        return lowestCommonAncestor(root.right, p, q);
+    else
+        return root;
+}
+
+
+---------------------------------------
+   10. Serialize and Deserialize Binary Tree
+
+  public class Codec {
+    public String serialize(TreeNode root) {
+        if (root == null) return "null";
+        return root.val + "," + serialize(root.left) + "," + serialize(root.right);
+    }
+
+    public TreeNode deserialize(String data) {
+        Queue<String> nodes = new LinkedList<>(Arrays.asList(data.split(",")));
+        return buildTree(nodes);
+    }
+
+    private TreeNode buildTree(Queue<String> nodes) {
+        String val = nodes.poll();
+        if (val.equals("null")) return null;
+        TreeNode node = new TreeNode(Integer.parseInt(val));
+        node.left = buildTree(nodes);
+        node.right = buildTree(nodes);
+        return node;
+    }
+}
+
+
+---------------------
+  11. Longest Palindromic Substring (Pattern: Expand Around Center)
+
+public String longestPalindrome(String s) {
+    if (s == null || s.length() < 1) return "";
+
+    int start = 0, end = 0;
+
+    for (int i = 0; i < s.length(); i++) {
+        // len1: odd length palindrome (e.g., "aba" at i=1 in "babad")
+        int len1 = expandFromCenter(s, i, i);
+
+        // len2: even length palindrome (e.g., "bb" at i=1 in "cbbd")
+        int len2 = expandFromCenter(s, i, i + 1);
+
+        // We take both because palindrome can be odd or even
+        int len = Math.max(len1, len2);
+
+        if (len > end - start) {
+            // update the indices if a longer palindrome is found
+            start = i - (len - 1) / 2;
+            end = i + len / 2;
+        }
+    }
+
+    return s.substring(start, end + 1); // return longest palindrome substring
+}
+
+private int expandFromCenter(String s, int left, int right) {
+    // Expand while the chars at left and right are equal
+    while (left >= 0 && right < s.length() && s.charAt(left) == s.charAt(right)) {
+        left--;
+        right++;
+    }
+    return right - left - 1; // final length of palindrome
+}
+
+
+Input: "babad"
+→ i=0: "b", i=1: "bab", i=2: "aba"
+✔ Longest = "bab" or "aba"
+
+Input: "cbbd"
+→ i=1: "bb" (even length!)
+✔ Longest = "bb"
+
+TC: O(n^2)
+SC:O(1)
+
+------------------------------------------------------------
+   12. Clone Graph (Pattern: DFS + HashMap)
+
+  class Node {
+    public int val;
+    public List<Node> neighbors;
+    public Node(int val) {
+        this.val = val;
+        neighbors = new ArrayList<>();
+    }
+}
+
+public Node cloneGraph(Node node) {
+    if (node == null) return null;
+    Map<Node, Node> map = new HashMap<>();
+    return dfs(node, map);
+}
+
+private Node dfs(Node node, Map<Node, Node> map) {
+    if (map.containsKey(node)) return map.get(node);
+
+    Node clone = new Node(node.val);
+    map.put(node, clone);
+
+    for (Node neighbor : node.neighbors) {
+        clone.neighbors.add(dfs(neighbor, map));
+    }
+
+    return clone;
+}
+
+
+Time: O(N + E), N = number of nodes, E = edges
+
+Space: O(N)
+----------------------------------------------------
+  
+ 13. Course Schedule (Pattern: Topological Sort - Kahn's Algo)
+
+
+
+  public boolean canFinish(int numCourses, int[][] prerequisites) {
+    int[] inDegree = new int[numCourses];
+    List<List<Integer>> graph = new ArrayList<>();
+
+    for (int i = 0; i < numCourses; i++) graph.add(new ArrayList<>());
+
+    for (int[] pair : prerequisites) {
+        graph.get(pair[1]).add(pair[0]);
+        inDegree[pair[0]]++;
+    }
+
+    Queue<Integer> queue = new LinkedList<>();
+    for (int i = 0; i < numCourses; i++)
+        if (inDegree[i] == 0) queue.add(i);
+
+    int count = 0;
+    while (!queue.isEmpty()) {
+        int course = queue.poll();
+        count++;
+
+        for (int neighbor : graph.get(course)) {
+            inDegree[neighbor]--;
+            if (inDegree[neighbor] == 0) queue.add(neighbor);
+        }
+    }
+
+    return count == numCourses;
+}
+
+
+
+14. Trapping Rain Water (Pattern: Two Pointers)
+
+  public int trap(int[] height) {
+    int left = 0, right = height.length - 1;
+    int leftMax = 0, rightMax = 0, result = 0;
+
+    while (left < right) {
+        if (height[left] < height[right]) {
+            if (height[left] >= leftMax)
+                leftMax = height[left];
+            else
+                result += leftMax - height[left];
+            left++;
+        } else {
+            if (height[right] >= rightMax)
+                rightMax = height[right];
+            else
+                result += rightMax - height[right];
+            right--;
+        }
+    }
+
+    return result;
+}
+
+
+Input: [0,1,0,2,1,0,1,3,2,1,2,1]
+Output: 6
+
+
+  15. Subset Sum / All Subsets (Pattern: Backtracking)
+
+  public List<List<Integer>> subsets(int[] nums) {
+    List<List<Integer>> result = new ArrayList<>();
+    backtrack(nums, 0, new ArrayList<>(), result);
+    return result;
+}
+
+private void backtrack(int[] nums, int start, List<Integer> temp, List<List<Integer>> result) {
+    result.add(new ArrayList<>(temp));
+    for (int i = start; i < nums.length; i++) {
+        temp.add(nums[i]);
+        backtrack(nums, i + 1, temp, result);
+        temp.remove(temp.size() - 1);
+    }
+}
+
+Input: [1,2,3]
+Output: [[], [1], [1,2], [1,2,3], [1,3], [2], [2,3], [3]]
+
+
+  ----------------------------------------
+  Coming Up Next (Let me know if you want):
+Word Ladder (BFS + HashMap)
+
+Sliding Window Maximum (Deque)
+
+Median from Data Stream (Two Heaps)
+
+Kth Smallest in BST (In-order Traversal)
+
+Trie-based Word Dictionary
 
   
   
